@@ -23,6 +23,9 @@ addon.ECHO_DEFAULTS = {
     -- Close the stack and the open card when combat starts (EchoModule.lua). Off, both
     -- stay open through combat.
     echoCloseInCombat      = true,
+    -- Whether Escape closes the stack or an open card, same as any other Blizzard panel
+    -- (EchoCard.lua / EchoStack.lua, via UISpecialFrames). Off, Escape leaves them alone.
+    echoCloseOnEscape      = true,
     echoToastStyle         = "framed",
     echoToastSeconds       = 4,
     echoHoverDelay         = 0.35,

@@ -117,6 +117,32 @@ local function CreateEdit()
     end)
 end
 
+local escapeCloses = false  -- whether "HorizonSuiteEchoStack" currently sits in UISpecialFrames
+
+-- Add or drop the stack from UISpecialFrames per "Close chat on Escape" (echoCloseOnEscape,
+-- default on). Called once as the stack is first built, and again from Echo.ApplyOptions
+-- whenever the setting changes.
+local function SyncCloseOnEscape()
+    local want = Echo.Setting("echoCloseOnEscape") ~= false
+    if want == escapeCloses then return end
+    escapeCloses = want
+    if want then
+        table.insert(UISpecialFrames, "HorizonSuiteEchoStack")
+    else
+        for i, name in ipairs(UISpecialFrames) do
+            if name == "HorizonSuiteEchoStack" then
+                table.remove(UISpecialFrames, i)
+                break
+            end
+        end
+    end
+end
+
+--- Push a changed echoCloseOnEscape setting onto the stack. Echo.ApplyOptions calls this.
+function Stack.ApplyCloseOnEscape()
+    SyncCloseOnEscape()
+end
+
 local function Create()
     root = CreateFrame("Frame", "HorizonSuiteEchoStack", UIParent)
     root:SetSize(Stack.WIDTH, Stack.HEIGHT + Stack.FAN * Stack.BEHIND + 18)
@@ -127,6 +153,7 @@ local function Create()
     root:SetScript("OnMouseWheel", function(_, delta) Stack.Flip(-delta) end)
     root:SetScript("OnEnter", function() Stack.HoverEnter() end)
     root:SetScript("OnLeave", function() Stack.HoverLeave() end)
+
     -- Closing on mouse-leave can't be event-driven: card/edit/buttons are mouse-enabled
     -- children with no OnEnter/OnLeave of their own, so root's OnLeave fires the instant the
     -- mouse crosses onto any of them and nothing fires when it later leaves those children.
@@ -160,7 +187,7 @@ local function Create()
         ParkDraft()
         if edit then edit:ClearFocus() end
     end)
-    table.insert(UISpecialFrames, "HorizonSuiteEchoStack")
+    SyncCloseOnEscape()
 
     for i = 1, Stack.BEHIND do
         local b = CreateFrame("Frame", nil, root)

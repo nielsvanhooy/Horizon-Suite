@@ -115,6 +115,7 @@ local options = {
       get = function() return getDB("echoCollapse", D.echoCollapse) end,
       set = function(v) setDB("echoCollapse", v) end },
     Toggle(L["ECHO_CLOSE_IN_COMBAT"], L["ECHO_CLOSE_IN_COMBAT_DESC"], "echoCloseInCombat", D.echoCloseInCombat),
+    Toggle(L["ECHO_CLOSE_ON_ESCAPE"], L["ECHO_CLOSE_ON_ESCAPE_DESC"], "echoCloseOnEscape", D.echoCloseOnEscape),
 
     Section(L["ECHO_SECTION_NOTIFICATIONS"]),
     { type = "dropdown", name = L["ECHO_TOAST_STYLE"], desc = L["ECHO_TOAST_STYLE_DESC"], dbKey = "echoToastStyle",

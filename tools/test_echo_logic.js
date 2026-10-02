@@ -1407,6 +1407,20 @@ run(`
   check("with no conversations the stack stays shut", not f.root:IsShown(), "shown")
   check("escape can close the stack", UISpecialFrames[#UISpecialFrames] == "HorizonSuiteEchoStack", UISpecialFrames[#UISpecialFrames])
 
+  -- "Close chat with Escape" switched off: the stack drops out of UISpecialFrames; back
+  -- on, it rejoins.
+  local function hasStackEscape()
+    for _, n in ipairs(UISpecialFrames) do if n == "HorizonSuiteEchoStack" then return true end end
+    return false
+  end
+  HorizonSuite.ECHO_DEFAULTS = HorizonSuite.ECHO_DEFAULTS or {}
+  HorizonSuite.ECHO_DEFAULTS.echoCloseOnEscape = false
+  K.ApplyCloseOnEscape()
+  check("echoCloseOnEscape off drops the stack from UISpecialFrames", not hasStackEscape(), "still registered")
+  HorizonSuite.ECHO_DEFAULTS.echoCloseOnEscape = true
+  K.ApplyCloseOnEscape()
+  check("echoCloseOnEscape back on re-registers the stack", hasStackEscape(), "not registered")
+
   S.Add({ convKey = "w:Brisa-Horizon", text = "got the leather", class = "DRUID", sender = "Brisa-Horizon" })
   S.Add({ convKey = "w:Brisa-Horizon", text = "can you craft it?", class = "DRUID", sender = "Brisa-Horizon" })
   S.Add({ convKey = "w:Vexa-Horizon", text = "gz", sender = "Vexa-Horizon" })
@@ -2318,6 +2332,21 @@ run(`
   check("escape can close the card", (function()
     for _, n in ipairs(UISpecialFrames) do if n == "HorizonSuiteEchoCard" then return true end end
     return false end)(), "not registered")
+
+  -- "Close chat with Escape" switched off: the card drops out of UISpecialFrames; back on,
+  -- it rejoins.
+  local function hasCardEscape()
+    for _, n in ipairs(UISpecialFrames) do if n == "HorizonSuiteEchoCard" then return true end end
+    return false
+  end
+  HorizonSuite.ECHO_DEFAULTS = HorizonSuite.ECHO_DEFAULTS or {}
+  HorizonSuite.ECHO_DEFAULTS.echoCloseOnEscape = false
+  C.ApplyCloseOnEscape()
+  check("echoCloseOnEscape off drops the card from UISpecialFrames", not hasCardEscape(), "still registered")
+  HorizonSuite.ECHO_DEFAULTS.echoCloseOnEscape = true
+  C.ApplyCloseOnEscape()
+  check("echoCloseOnEscape back on re-registers the card", hasCardEscape(), "not registered")
+
   C.Open(nil)
   check("with no conversations the card stays shut", not f.root:IsShown(), "shown")
 

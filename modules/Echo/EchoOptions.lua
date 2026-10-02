@@ -122,6 +122,8 @@ function Echo.ApplyOptions()
     if Echo.Tiles and Echo.Tiles.ApplyPosition then Echo.Tiles.ApplyPosition() end
     if Echo.Card and Echo.Card.ApplySize then Echo.Card.ApplySize() end
     if Echo.Card and Echo.Card.ApplyIdleClose then Echo.Card.ApplyIdleClose() end
+    if Echo.Card and Echo.Card.ApplyCloseOnEscape then Echo.Card.ApplyCloseOnEscape() end
+    if Echo.Stack and Echo.Stack.ApplyCloseOnEscape then Echo.Stack.ApplyCloseOnEscape() end
     -- Re-anchor an open stack or card to the column's new scale, strata or edge.
     local stack = _G.HorizonSuiteEchoStack
     if stack and stack:IsShown() and Echo.Stack.Reanchor then Echo.Stack.Reanchor() end

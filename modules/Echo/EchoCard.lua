@@ -236,6 +236,32 @@ local function NotifyInput()
     if Echo.Input then Echo.Input.Reanchor() end
 end
 
+local escapeCloses = false  -- whether "HorizonSuiteEchoCard" currently sits in UISpecialFrames
+
+-- Add or drop the card from UISpecialFrames per "Close chat on Escape" (echoCloseOnEscape,
+-- default on). Called once as the card is first built, and again from Echo.ApplyOptions
+-- whenever the setting changes.
+local function SyncCloseOnEscape()
+    local want = Echo.Setting("echoCloseOnEscape") ~= false
+    if want == escapeCloses then return end
+    escapeCloses = want
+    if want then
+        table.insert(UISpecialFrames, "HorizonSuiteEchoCard")
+    else
+        for i, name in ipairs(UISpecialFrames) do
+            if name == "HorizonSuiteEchoCard" then
+                table.remove(UISpecialFrames, i)
+                break
+            end
+        end
+    end
+end
+
+--- Push a changed echoCloseOnEscape setting onto the card. Echo.ApplyOptions calls this.
+function Card.ApplyCloseOnEscape()
+    SyncCloseOnEscape()
+end
+
 local function Create()
     local View = Echo.View
     local a = View.ACCENT
@@ -245,7 +271,7 @@ local function Create()
     root:EnableMouse(true)
     root:Hide()
     Paint(root, View.PANEL_BG, View.PANEL_BORDER, Echo.Round.PANEL, true)
-    table.insert(UISpecialFrames, "HorizonSuiteEchoCard")
+    SyncCloseOnEscape()
     root:SetScript("OnHide", function()
         -- Covers closes that bypass Card.Hide entirely, e.g. Escape via UISpecialFrames
         -- calling root:Hide() directly: leave no stale draft or stuck focus behind, and
