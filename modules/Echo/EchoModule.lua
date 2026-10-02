@@ -50,10 +50,14 @@ end
 
 local function OnLifecycleEvent(_, event)
     if event == "PLAYER_REGEN_DISABLED" then
-        Echo.Stack.Hide()
-        -- The combat log stays open through combat: that is when it is read.
-        if not (Echo.Card.IsShown() and Echo.Card.ShownKey() == Echo.CombatLog.KEY) then
-            Echo.Card.Hide()
+        -- "Close tiles in combat" (default on): the stack and the open card close as combat
+        -- starts. Switched off, both stay open through combat like everything else.
+        if Echo.Setting("echoCloseInCombat") ~= false then
+            Echo.Stack.Hide()
+            -- The combat log stays open through combat: that is when it is read.
+            if not (Echo.Card.IsShown() and Echo.Card.ShownKey() == Echo.CombatLog.KEY) then
+                Echo.Card.Hide()
+            end
         end
         if Echo.Setting("echoHoldToastsInCombat") then Echo.Tiles.Hold(true) end
     elseif event == "PLAYER_REGEN_ENABLED" then

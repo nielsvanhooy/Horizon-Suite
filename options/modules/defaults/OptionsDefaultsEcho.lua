@@ -20,6 +20,9 @@ addon.ECHO_DEFAULTS = {
     echoMaxTiles           = 8,
     -- Collapse mode (EchoCollapse.lua): "off", "all" or "keepnew".
     echoCollapse           = "off",
+    -- Close the stack and the open card when combat starts (EchoModule.lua). Off, both
+    -- stay open through combat.
+    echoCloseInCombat      = true,
     echoToastStyle         = "framed",
     echoToastSeconds       = 4,
     echoHoverDelay         = 0.35,

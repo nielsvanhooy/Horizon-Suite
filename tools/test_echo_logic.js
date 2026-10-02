@@ -1869,6 +1869,7 @@ run(`
       IsModuleEnabled = A.IsModuleEnabled, IsLoggedIn = IsLoggedIn, CreateFrame = CreateFrame,
       SessionKeys = H.SessionKeys, SaveSession = H.SaveSession, Now = S.Now,
       hold = A.ECHO_DEFAULTS and A.ECHO_DEFAULTS.echoHoldToastsInCombat,
+      closeInCombat = A.ECHO_DEFAULTS and A.ECHO_DEFAULTS.echoCloseInCombat,
     },
     frames = {},
   }
@@ -1933,6 +1934,22 @@ run(`
   fire("PLAYER_REGEN_ENABLED")
   check("leaving combat releases toasts", T.holding == false, tostring(T.holding))
 
+  -- "Close chat in combat" switched off: the stack and card each stay open through combat.
+  -- (Stack.Open and Card.Open each close the other, so they're checked one at a time.)
+  A.ECHO_DEFAULTS.echoCloseInCombat = false
+  K.Open("w:Brisa-Horizon")
+  fire("PLAYER_REGEN_DISABLED")
+  check("echoCloseInCombat off leaves the stack open", f.root:IsShown(), "hidden")
+  fire("PLAYER_REGEN_ENABLED")
+  C.Open("w:Brisa-Horizon")
+  fire("PLAYER_REGEN_DISABLED")
+  check("echoCloseInCombat off leaves the card open", cf.root:IsShown(), "hidden")
+  fire("PLAYER_REGEN_ENABLED")
+  A.ECHO_DEFAULTS.echoCloseInCombat = true
+  K.Hide()
+  C.Hide()
+
+
   sessionKeys = { "w:Saved-Horizon", "bn:9" }
   clock = clock + 20
   fire("BN_FRIEND_INFO_CHANGED")
@@ -1961,6 +1978,7 @@ run(`
   A.IsModuleEnabled, IsLoggedIn, CreateFrame = saved.IsModuleEnabled, saved.IsLoggedIn, saved.CreateFrame
   H.SessionKeys, H.SaveSession, S.Now = saved.SessionKeys, saved.SaveSession, saved.Now
   A.ECHO_DEFAULTS.echoHoldToastsInCombat = saved.hold
+  A.ECHO_DEFAULTS.echoCloseInCombat = saved.closeInCombat
   Echo.Init, Echo.Disable, Echo.RestoreSession = nil, nil, nil
   _G.ECHO_TEST_DB = nil
   MODULE_TEST = nil
